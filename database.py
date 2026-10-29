@@ -1,9 +1,11 @@
 import sqlite3
 import hashlib
 from datetime import datetime
+from pathlib import Path
 from config import Config
 
 def get_db_connection():
+    Path(Config.DATABASE_PATH).parent.mkdir(parents=True, exist_ok=True)
     conn = sqlite3.connect(Config.DATABASE_PATH)
     conn.row_factory = sqlite3.Row
     return conn
