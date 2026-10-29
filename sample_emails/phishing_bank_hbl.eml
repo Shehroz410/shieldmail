@@ -1,0 +1,31 @@
+From: "Habib Bank Limited" <security-alert@login-verify-account.xyz>
+To: victim.user@company.com
+Reply-To: attacker@darkmail.ru
+Subject: URGENT: Your Account is Comprorised!
+Date: Wed, 29 Oct 2026 10:14:22 +0500
+Message-ID: <threat-hbl-99214@login-verify-account.xyz>
+MIME-Version: 1.0
+Content-Type: text/html; charset="utf-8"
+Authentication-Results: mx.google.com;
+  spf=fail (google.com: domain of security-alert@login-verify-account.xyz does not designate 192.0.2.1 as permitted sender);
+  dkim=fail header.i=@login-verify-account.xyz;
+  dmarc=fail (p=REJECT)
+Received-SPF: fail (google.com: domain of security-alert@login-verify-account.xyz does not designate 192.0.2.1 as permitted sender)
+
+<!DOCTYPE html>
+<html>
+<head><title>Account Alert</title></head>
+<body style="font-family: Arial, sans-serif;">
+  <h2 style="color: #b91c1c;">URGENT: Your HBL Account is Comprorised!</h2>
+  <p>Dear Valued Customer,</p>
+  <p>We detected unauthorized login attempts from an unverified IP address. In accordance with security protocol #991, your account has been temporarily restricted.</p>
+  <p><strong>Action Required:</strong> You must verify your credentials within 24 hours, or your online banking access will be permanently terminated.</p>
+  <p>
+    Please click the official portal link to verify immediately:
+    <br/>
+    <a href="http://login-verify-account.xyz/steal">https://www.hbl.com/login</a>
+  </p>
+  <p>Thank you,<br/>Habib Bank Limited Security Team</p>
+  <img src="http://login-verify-account.xyz/tracker.gif" width="1" height="1" style="display:none;" />
+</body>
+</html>

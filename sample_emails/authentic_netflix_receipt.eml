@@ -1,0 +1,38 @@
+From: "Netflix" <info@mailer.netflix.com>
+To: alex.member@example.com
+Subject: Update your payment details to continue watching
+Date: Thu, 30 Oct 2026 08:30:00 +0000
+Message-ID: <0100018b1c4e92a1-netflix-notice@mailer.netflix.com>
+MIME-Version: 1.0
+Content-Type: text/html; charset="utf-8"
+Authentication-Results: mx.google.com;
+  spf=pass (google.com: domain of info@mailer.netflix.com designates 198.2.186.10 as permitted sender);
+  dkim=pass header.i=@mailer.netflix.com;
+  dmarc=pass (p=REJECT)
+Received-SPF: pass (google.com: domain of info@mailer.netflix.com designates 198.2.186.10 as permitted sender)
+
+<!DOCTYPE html>
+<html>
+<body style="font-family: Helvetica, Arial, sans-serif; background-color: #141414; color: #ffffff; padding: 20px;">
+  <div style="max-width: 600px; margin: auto; background-color: #000000; padding: 30px; border-radius: 4px;">
+    <h1 style="color: #e50914; font-size: 28px; margin-bottom: 20px;">NETFLIX</h1>
+    <h2 style="font-size: 20px; font-weight: normal;">Please update your payment method</h2>
+    <p style="color: #cccccc; font-size: 15px; line-height: 1.5;">
+      Hi Alex,<br/><br/>
+      We were unable to authorize your monthly payment of $15.49 for your Netflix membership.
+      Please update your payment information to continue enjoying unlimited TV shows and movies without interruption.
+    </p>
+    <div style="margin: 30px 0;">
+      <a href="https://www.netflix.com/youraccount" style="background-color: #e50914; color: #ffffff; text-decoration: none; padding: 12px 24px; font-weight: bold; border-radius: 4px; display: inline-block;">
+        UPDATE PAYMENT
+      </a>
+    </div>
+    <p style="color: #999999; font-size: 13px;">
+      Questions? Visit the <a href="https://help.netflix.com" style="color: #cccccc;">Help Center</a> for answers or to contact customer support.
+    </p>
+    <p style="color: #666666; font-size: 11px; margin-top: 30px;">
+      Netflix, Inc. 121 Albright Way, Los Gatos, CA 95032 USA
+    </p>
+  </div>
+</body>
+</html>

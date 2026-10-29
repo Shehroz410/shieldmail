@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShieldMail AI | Email Security Scanner & Threat Detection</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cyber: {
+                            900: '#070a13',
+                            800: '#0d121f',
+                            700: '#141b2d',
+                            border: '#1e293b',
+                            cyan: '#00f2fe',
+                            red: '#ff3366',
+                            yellow: '#ffab00',
+                            green: '#00e676'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom Cyber Dark Styles -->
+    <link rel="stylesheet" href="./static/css/style.css">
+</head>
+<body class="bg-[#070a13] text-gray-200 min-h-screen flex flex-col antialiased selection:bg-cyan-500 selection:text-black">
+
+    <!-- Top Navigation Bar -->
+    <header class="border-b border-slate-800/80 bg-[#0a0f1d]/90 backdrop-blur sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center text-black font-black text-xl shadow-lg shadow-cyan-500/20">
+                    <i class="fas fa-shield-halved"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg font-black tracking-wider text-white flex items-center gap-2">
+                        SHIELDMAIL <span class="text-cyan-400">AI</span>
+                        <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-cyan-950 text-cyan-300 border border-cyan-800">v2.5 PRO</span>
+                    </h1>
+                    <p class="text-xs text-gray-400">AI-Powered Threat Detection & Linguistic Post-Mortem Engine</p>
+                </div>
+            </div>
+
+            <!-- Header Quick Stats -->
+            <div class="hidden lg:flex items-center gap-5 border-x border-slate-800 px-5 py-1 text-xs">
+                <div>
+                    <div class="text-gray-400">Total Scanned</div>
+                    <div class="text-base font-bold text-white font-mono" id="stat-total-scans">0</div>
+                </div>
+                <div>
+                    <div class="text-gray-400">Phishing Blocked</div>
+                    <div class="text-base font-bold text-rose-400 font-mono" id="stat-phishing-count">0</div>
+                </div>
+                <div>
+                    <div class="text-gray-400">Suspicious</div>
+                    <div class="text-base font-bold text-amber-400 font-mono" id="stat-suspicious-count">0</div>
+                </div>
+                <div>
+                    <div class="text-gray-400">Safe Verified</div>
+                    <div class="text-base font-bold text-emerald-400 font-mono" id="stat-safe-count">0</div>
+                </div>
+                <button type="button" onclick="clearAllHistory()" title="Reset scan history and counters to zero" class="text-gray-500 hover:text-red-400 transition text-xs p-1">
+                    <i class="fas fa-trash-can"></i>
+                </button>
+            </div>
+
+            <!-- Action Controls -->
+            <div class="flex items-center gap-3">
+                <div id="header-ai-status" class="px-2.5 py-1 rounded-full bg-slate-800/60 border border-slate-700">
+                    <span class="text-xs text-gray-400"><i class="fas fa-spinner fa-spin"></i> Checking AI...</span>
+                </div>
+                <button id="btn-open-settings" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-gray-300 hover:text-white border border-slate-700 text-xs font-medium transition flex items-center gap-1.5">
+                    <i class="fas fa-gear"></i> Settings
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Layout -->
+    <main class="max-w-7xl mx-auto px-4 py-6 flex-1 w-full grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+        <!-- Left Column: Input Modes & Controls (7 Cols on desktop) -->
+        <section class="lg:col-span-7 flex flex-col gap-5">
+
+            <!-- Scanning Laser Animation Bar (shown during scans) -->
+            <div id="scanning-laser-indicator" class="hidden laser-scanner h-1.5 rounded-full bg-cyan-950 w-full"></div>
+
+            <!-- Mode Selector Tabs (The 3 Tareeqe + Blacklist & History) -->
+            <div class="flex items-center gap-1.5 border-b border-slate-800 pb-2 overflow-x-auto whitespace-nowrap scrollbar-none">
+                <button data-tab-target="tab-direct" class="px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 flex-shrink-0 text-cyan-400 border border-cyan-500/50 bg-cyan-950/40 transition">
+                    <i class="fas fa-paste"></i> 1. Direct Copy-Paste
+                </button>
+                <button data-tab-target="tab-eml" class="px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 flex-shrink-0 text-gray-400 border border-transparent hover:text-gray-200 transition">
+                    <i class="fas fa-file-arrow-up"></i> 2. Raw .eml Upload
+                </button>
+                <button data-tab-target="tab-inbox" class="px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 flex-shrink-0 text-gray-400 border border-transparent hover:text-gray-200 transition">
+                    <i class="fas fa-inbox"></i> 3. Gmail Sync (Live Inbox)
+                </button>
+                <button data-tab-target="tab-history" class="px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 flex-shrink-0 text-gray-400 border border-transparent hover:text-gray-200 transition">
+                    <i class="fas fa-clock-rotate-left"></i> History
+                </button>
+                <button data-tab-target="tab-blacklist" class="px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 flex-shrink-0 text-gray-400 border border-transparent hover:text-gray-200 transition">
+                    <i class="fas fa-ban"></i> Threat DB
+                </button>
+            </div>
+
+            <!-- TAB 1: Direct Copy-Paste -->
+            <div id="tab-direct" class="tab-pane flex flex-col gap-4">
+                <!-- 1-Click Test Scenarios Bar -->
+                <div class="bg-slate-900/90 border border-slate-800 p-3 rounded-xl flex flex-col gap-2">
+                    <div class="flex items-center justify-between text-xs text-gray-400">
+                        <span class="font-semibold text-cyan-300"><i class="fas fa-flask"></i> Optional Test Presets (Click to test phishing templates):</span>
+                        <button type="button" onclick="clearDirectForm()" class="px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-gray-300 text-[11px] border border-slate-700 flex items-center gap-1 transition">
+                            <i class="fas fa-eraser"></i> Clear Form
+                        </button>
+                    </div>
+                    <div class="flex flex-wrap gap-1.5">
+                        <button type="button" data-sample="hbl_phishing" class="px-2.5 py-1.5 rounded-lg bg-red-950/60 hover:bg-red-900/70 border border-red-800/60 text-red-200 text-xs transition flex items-center gap-1.5">
+                            <i class="fas fa-triangle-exclamation text-red-400"></i> HBL Bank Phishing
+                        </button>
+                        <button type="button" data-sample="microsoft_spoof" class="px-2.5 py-1.5 rounded-lg bg-amber-950/60 hover:bg-amber-900/70 border border-amber-800/60 text-amber-200 text-xs transition flex items-center gap-1.5">
+                            <i class="fas fa-file-invoice text-amber-400"></i> Microsoft Spoofed Invoice
+                        </button>
+                        <button type="button" data-sample="urgent_ceo_wire" class="px-2.5 py-1.5 rounded-lg bg-purple-950/60 hover:bg-purple-900/70 border border-purple-800/60 text-purple-200 text-xs transition flex items-center gap-1.5">
+                            <i class="fas fa-user-secret text-purple-400"></i> CEO Wire Transfer BEC
+                        </button>
+                        <button type="button" data-sample="safe_amazon_receipt" class="px-2.5 py-1.5 rounded-lg bg-emerald-950/60 hover:bg-emerald-900/70 border border-emerald-800/60 text-emerald-200 text-xs transition flex items-center gap-1.5">
+                            <i class="fas fa-check text-emerald-400"></i> Safe Amazon Receipt
+                        </button>
+                        <button type="button" data-sample="real_netflix_auth" class="px-2.5 py-1.5 rounded-lg bg-emerald-950/60 hover:bg-emerald-900/70 border border-emerald-800/60 text-emerald-200 text-xs transition flex items-center gap-1.5">
+                            <i class="fas fa-check-double text-emerald-400"></i> Real Netflix (Authentic)
+                        </button>
+                        <button type="button" data-sample="prompt_injection_test" class="px-2.5 py-1.5 rounded-lg bg-cyan-950/60 hover:bg-cyan-900/70 border border-cyan-800/60 text-cyan-200 text-xs transition flex items-center gap-1.5">
+                            <i class="fas fa-bug text-cyan-400"></i> Prompt Injection Test
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Form Card -->
+                <form id="direct-scan-form" class="bg-[#0d121f] border border-slate-800 p-5 rounded-2xl shadow-xl flex flex-col gap-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-300 mb-1">
+                                Sender Email / Display Name <span class="text-rose-400">*</span>
+                            </label>
+                            <input type="text" id="direct-sender" placeholder="e.g. Microsoft Support <billing99@gmail.com>" required
+                                class="w-full px-3 py-2 text-xs rounded-lg bg-slate-900 border border-slate-700 focus:border-cyan-500 focus:outline-none text-gray-100 placeholder-gray-500 font-mono">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-300 mb-1">
+                                Reply-To Address <span class="text-gray-500 font-normal">(Optional for Reply Mismatch Check)</span>
+                            </label>
+                            <input type="text" id="direct-reply-to" placeholder="e.g. attacker@darkmail.ru"
+                                class="w-full px-3 py-2 text-xs rounded-lg bg-slate-900 border border-slate-700 focus:border-cyan-500 focus:outline-none text-gray-100 placeholder-gray-500 font-mono">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-300 mb-1">
+                            Email Subject Line
+                        </label>
+                        <input type="text" id="direct-subject" placeholder="e.g. URGENT: Your Account is Compromised!"
+                            class="w-full px-3 py-2 text-xs rounded-lg bg-slate-900 border border-slate-700 focus:border-cyan-500 focus:outline-none text-gray-100 placeholder-gray-500">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-300 mb-1">
+                            Email Body Text or HTML <span class="text-rose-400">*</span>
+                        </label>
+                        <textarea id="direct-body" rows="7" placeholder="Paste the full suspicious email text or HTML markup here..." required
+                            class="w-full px-3 py-2 text-xs rounded-lg bg-slate-900 border border-slate-700 focus:border-cyan-500 focus:outline-none text-gray-100 placeholder-gray-500 font-mono leading-relaxed"></textarea>
+                    </div>
+
+                    <!-- Attachment simulation -->
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-300 mb-1">
+                            Attached Files <span class="text-gray-500 font-normal">(for executable / dangerous extension checks)</span>
+                        </label>
+                        <div class="flex gap-2">
+                            <input type="text" id="direct-attachment-input" placeholder="e.g. Invoice_Payment.zip, Update.exe, Details.scr"
+                                class="flex-1 px-3 py-1.5 text-xs rounded-lg bg-slate-900 border border-slate-700 focus:border-cyan-500 focus:outline-none text-gray-200 font-mono">
+                            <button type="button" id="btn-add-attachment" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs border border-slate-700 text-gray-200">
+                                <i class="fas fa-plus"></i> Add File
+                            </button>
+                        </div>
+                        <div id="direct-attachments-container" class="flex flex-wrap gap-1.5 mt-2"></div>
+                    </div>
+
+                    <button type="submit" id="btn-direct-scan" class="w-full py-3 px-4 rounded-xl font-bold text-sm bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-black shadow-lg shadow-cyan-500/25 transition flex items-center justify-center gap-2">
+                        <i class="fas fa-shield-virus text-base"></i> START DEEP SECURITY SCAN
+                    </button>
+                </form>
+            </div>
+
+            <!-- TAB 2: Raw .eml File Upload -->
+            <div id="tab-eml" class="tab-pane hidden flex flex-col gap-4">
+                <div class="bg-[#0d121f] border border-slate-800 p-6 rounded-2xl shadow-xl flex flex-col gap-4">
+                    <div class="text-xs text-gray-400">
+                        Upload standard RFC822 raw email files (<code class="text-cyan-400">.eml</code>). The scanner performs complete MIME extraction, checks cryptographic SPF/DKIM/DMARC headers, inspects binary attachments, and parses HTML/text bodies.
+                    </div>
+
+                    <!-- Drag & Drop Zone -->
+                    <div id="eml-dropzone" class="border-2 border-dashed border-slate-700 hover:border-cyan-500 rounded-2xl p-8 text-center cursor-pointer transition bg-slate-900/40 flex flex-col items-center justify-center gap-3">
+                        <div class="w-14 h-14 rounded-2xl bg-cyan-950/60 border border-cyan-800/80 flex items-center justify-center text-cyan-400 text-2xl">
+                            <i class="fas fa-cloud-arrow-up"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm font-semibold text-gray-200">Drag & Drop your .eml file here</p>
+                            <p class="text-xs text-gray-500 mt-1">or click to browse from your computer (Max 16MB)</p>
+                        </div>
+                        <input type="file" id="eml-file-input" accept=".eml,.msg,.txt" class="hidden">
+                    </div>
+
+                    <div id="eml-upload-status"></div>
+
+                    <!-- Sample .eml Download Buttons -->
+                    <div class="border-t border-slate-800 pt-4 mt-2">
+                        <span class="text-xs font-semibold text-gray-400 block mb-2">Download Ready-to-Test Sample .eml Files:</span>
+                        <div class="flex flex-wrap gap-2">
+                            <a href="/download/sample/phishing_bank_hbl.eml" class="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-red-300 border border-slate-700 flex items-center gap-1.5">
+                                <i class="fas fa-download"></i> phishing_bank_hbl.eml
+                            </a>
+                            <a href="/download/sample/spoofed_microsoft_invoice.eml" class="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-amber-300 border border-slate-700 flex items-center gap-1.5">
+                                <i class="fas fa-download"></i> spoofed_microsoft.eml
+                            </a>
+                            <a href="/download/sample/urgent_ceo_wire.eml" class="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-purple-300 border border-slate-700 flex items-center gap-1.5">
+                                <i class="fas fa-download"></i> urgent_ceo_wire.eml
+                            </a>
+                            <a href="/download/sample/safe_amazon_receipt.eml" class="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-emerald-300 border border-slate-700 flex items-center gap-1.5">
+                                <i class="fas fa-download"></i> safe_amazon_receipt.eml
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 3: Gmail Sync (Live Inbox) -->
+            <div id="tab-inbox" class="tab-pane hidden flex flex-col gap-4">
+                <div class="bg-[#0d121f] border border-slate-800 p-5 rounded-2xl shadow-xl flex flex-col gap-4">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-4">
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                                    <i class="fab fa-google text-red-400"></i> Live Mailbox Sync (Gmail / IMAP Read-Only Mode)
+                                </h3>
+                                <span id="inbox-status-indicator" class="px-2 py-0.5 rounded-full text-[10px] font-mono bg-slate-800 text-gray-400 border border-slate-700">Not Connected</span>
+                            </div>
+                            <p class="text-xs text-gray-400 mt-1">Connect your real email account via secure SSL to inspect live incoming emails.</p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button type="button" id="btn-scan-all-inbox" onclick="scanAllInboxEmails()" class="hidden px-3.5 py-1.5 rounded-xl text-xs font-bold bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-black transition shadow flex items-center gap-1.5">
+                                <i class="fas fa-bolt"></i> Scan All Fetched Emails
+                            </button>
+                            <button type="button" id="btn-disconnect-inbox" onclick="disconnectInbox()" class="hidden px-3 py-1.5 rounded-xl text-xs bg-red-950 hover:bg-red-900 text-red-300 border border-red-800 transition flex items-center gap-1.5">
+                                <i class="fas fa-power-off"></i> Disconnect
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Connect Real Mailbox Form -->
+                    <div id="inbox-connect-card" class="bg-slate-900/70 border border-slate-800 p-4 rounded-xl flex flex-col gap-3">
+                        <div class="flex items-center justify-between text-xs">
+                            <span class="font-semibold text-gray-200 flex items-center gap-1.5">
+                                <i class="fas fa-plug text-cyan-400"></i> Connect Your Real Mailbox:
+                            </span>
+                            <span class="text-[11px] text-gray-400">Read-only SSL connection</span>
+                        </div>
+                        <form id="inbox-connect-form" class="grid grid-cols-1 md:grid-cols-12 gap-2 text-xs">
+                            <div class="md:col-span-5">
+                                <input type="email" id="inbox-email-input" placeholder="Your Email (e.g. you@gmail.com)" required
+                                    class="w-full px-3 py-2 rounded-lg bg-slate-800 border border-slate-700 text-gray-200 focus:outline-none focus:border-cyan-500 font-mono">
+                            </div>
+                            <div class="md:col-span-4">
+                                <input type="password" id="inbox-password-input" placeholder="App Password / Password" required
+                                    class="w-full px-3 py-2 rounded-lg bg-slate-800 border border-slate-700 text-gray-200 focus:outline-none focus:border-cyan-500 font-mono">
+                            </div>
+                            <div class="md:col-span-3 flex gap-2">
+                                <button type="submit" id="btn-submit-connect" class="flex-1 px-3 py-2 rounded-lg bg-cyan-600 hover:bg-cyan-500 text-white font-bold transition flex items-center justify-center gap-1.5">
+                                    <i class="fas fa-cloud-arrow-down"></i> Connect
+                                </button>
+                            </div>
+                        </form>
+                        <div class="flex flex-wrap items-center justify-between gap-2 text-[11px] text-gray-400 pt-1">
+                            <div>
+                                <i class="fas fa-info-circle text-cyan-400 mr-1"></i>
+                                <span>For Gmail, use a 16-letter App Password from <a href="https://myaccount.google.com/apppasswords" target="_blank" class="text-cyan-400 hover:underline">Google App Passwords</a>.</span>
+                            </div>
+                            <button type="button" onclick="loadDemoInboxEmails()" class="text-xs text-amber-400 hover:text-amber-300 underline font-medium">
+                                Or Load Sample Emails for Testing
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Email Stream List -->
+                    <div id="inbox-list" class="max-h-[500px] overflow-y-auto rounded-xl bg-slate-900/50 border border-slate-800/80 divide-y divide-slate-800/80">
+                        <div class="p-8 text-center text-gray-500 text-xs">
+                            <i class="fas fa-envelope-circle-check text-2xl mb-2 text-gray-600 block"></i>
+                            Connect your mailbox above or click "Load Sample Emails" to populate real-world incoming messages.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 4: Scan History -->
+            <div id="tab-history" class="tab-pane hidden flex flex-col gap-4">
+                <div class="bg-[#0d121f] border border-slate-800 p-5 rounded-2xl shadow-xl flex flex-col gap-3">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3 class="text-sm font-bold text-white">Scan Audit Log</h3>
+                            <p class="text-xs text-emerald-400 mt-0.5 flex items-center gap-1">
+                                <i class="fas fa-shield-cat"></i> Zero Body Storage Policy Active: Email bodies are NEVER saved to database.
+                            </p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button type="button" onclick="loadHistory()" class="px-2.5 py-1 text-xs rounded bg-slate-800 text-gray-300 hover:text-white border border-slate-700">
+                                <i class="fas fa-rotate"></i> Refresh
+                            </button>
+                            <button type="button" onclick="clearAllHistory()" class="px-2.5 py-1 text-xs rounded bg-red-950/80 hover:bg-red-900 text-red-300 border border-red-800 transition">
+                                <i class="fas fa-trash-can"></i> Reset History
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="overflow-x-auto max-h-[500px]">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="border-b border-slate-800 text-[11px] uppercase tracking-wider text-gray-400 bg-slate-900/60">
+                                    <th class="p-3">Date</th>
+                                    <th class="p-3">Sender</th>
+                                    <th class="p-3">Subject</th>
+                                    <th class="p-3">Risk Verdict</th>
+                                    <th class="p-3">Type</th>
+                                    <th class="p-3 text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="history-table-body">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 5: Threat DB (Reported Domains Blacklist) -->
+            <div id="tab-blacklist" class="tab-pane hidden flex flex-col gap-4">
+                <div class="bg-[#0d121f] border border-slate-800 p-5 rounded-2xl shadow-xl flex flex-col gap-4">
+                    <div>
+                        <h3 class="text-sm font-bold text-white">Threat Intelligence Blacklist (ReportedDomains)</h3>
+                        <p class="text-xs text-gray-400 mt-0.5">Locally managed known phishing domains, typosquatting lookalikes, and command & control relays.</p>
+                    </div>
+
+                    <!-- Add Domain Form -->
+                    <form id="add-domain-form" class="bg-slate-900/80 p-3 rounded-xl border border-slate-800 flex flex-col md:flex-row gap-2">
+                        <input type="text" id="blacklist-domain-input" placeholder="Domain name (e.g. evil-phish.xyz)" required
+                            class="flex-1 px-3 py-1.5 text-xs rounded bg-slate-800 border border-slate-700 text-gray-200 focus:outline-none focus:border-cyan-500 font-mono">
+                        <input type="text" id="blacklist-reason-input" placeholder="Reason (e.g. Credential harvesting portal)" required
+                            class="flex-1 px-3 py-1.5 text-xs rounded bg-slate-800 border border-slate-700 text-gray-200 focus:outline-none focus:border-cyan-500">
+                        <select id="blacklist-risk-select" class="px-2 py-1.5 text-xs rounded bg-slate-800 border border-slate-700 text-gray-200">
+                            <option value="Critical">Critical</option>
+                            <option value="High" selected>High</option>
+                            <option value="Medium">Medium</option>
+                        </select>
+                        <button type="submit" class="px-3 py-1.5 rounded bg-rose-600 hover:bg-rose-500 text-white font-semibold text-xs transition">
+                            <i class="fas fa-plus"></i> Add Blacklist
+                        </button>
+                    </form>
+
+                    <div id="blacklist-items-container" class="flex flex-col gap-2 max-h-[400px] overflow-y-auto">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- Right Column: Visual Dashboard Verdict & Deep Forensics (5 Cols on desktop) -->
+        <section class="lg:col-span-5 flex flex-col gap-5">
+
+            <!-- Standby Placeholder when no scan is active -->
+            <div id="verdict-placeholder" class="bg-[#0d121f] border border-slate-800 rounded-2xl p-8 flex flex-col items-center justify-center text-center min-h-[480px]">
+                <div class="w-20 h-20 rounded-full bg-slate-900 border border-slate-700 flex items-center justify-center text-cyan-400 text-3xl mb-4 radar-active">
+                    <i class="fas fa-radar"></i>
+                </div>
+                <h3 class="text-base font-bold text-white mb-1">Scanner Engine Ready</h3>
+                <p class="text-xs text-gray-400 max-w-xs leading-relaxed">
+                    Select an email on the left or click one of the quick test presets to execute the 5-step technical post-mortem analysis.
+                </p>
+                <div class="mt-6 flex flex-wrap justify-center gap-2 text-[11px] text-gray-500">
+                    <span class="px-2 py-1 rounded bg-slate-900 border border-slate-800"><i class="fas fa-shield text-cyan-400"></i> SPF/DKIM</span>
+                    <span class="px-2 py-1 rounded bg-slate-900 border border-slate-800"><i class="fas fa-link text-yellow-400"></i> Link Trap Check</span>
+                    <span class="px-2 py-1 rounded bg-slate-900 border border-slate-800"><i class="fas fa-brain text-purple-400"></i> Gemini NLP</span>
+                </div>
+            </div>
+
+            <!-- Active Scan Verdict Content -->
+            <div id="verdict-content" class="hidden flex flex-col gap-5">
+
+                <!-- Main Verdict Card -->
+                <div id="verdict-card" class="bg-[#0d121f] border-2 border-slate-800 rounded-2xl p-6 shadow-2xl transition duration-500">
+
+                    <!-- Radial Score Gauge + Verdict Text -->
+                    <div class="flex items-center justify-between gap-4 border-b border-slate-800/80 pb-5">
+                        <div class="flex-1">
+                            <span id="verdict-badge" class="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-slate-800 text-gray-300">
+                                VERDICT
+                            </span>
+                            <h2 id="verdict-title" class="text-2xl font-black mt-1 text-white">
+                                Scanning...
+                            </h2>
+                            <p class="text-xs text-gray-400 mt-1">Multi-factor AI Threat Assessment</p>
+                        </div>
+
+                        <!-- Gauge Circular Chart -->
+                        <div class="relative w-24 h-24 flex-shrink-0 flex items-center justify-center">
+                            <svg class="w-full h-full -rotate-90" viewBox="0 0 100 100">
+                                <circle cx="50" cy="50" r="40" stroke="#1e293b" stroke-width="9" fill="transparent"/>
+                                <circle id="gauge-circle-progress" class="risk-gauge-circle" cx="50" cy="50" r="40" stroke="#00f2fe" stroke-width="9" stroke-linecap="round" fill="transparent" stroke-dasharray="251.2" stroke-dashoffset="251.2"/>
+                            </svg>
+                            <div class="absolute inset-0 flex flex-col items-center justify-center">
+                                <span id="verdict-score-text" class="text-lg font-black font-mono text-white">0%</span>
+                                <span class="text-[9px] uppercase tracking-wider text-gray-400">Risk</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Security Guard 2: Rule-Based Override Banner -->
+                    <div id="rule-override-banner" class="hidden my-4 p-3 rounded-xl bg-red-950/80 border border-red-500 text-xs text-red-200 flex items-start gap-2.5">
+                        <i class="fas fa-shield-halved text-red-400 text-base mt-0.5"></i>
+                        <div>
+                            <div class="font-bold text-red-300">SECURITY POLICY ENFORCED: AI SCORE OVERRIDDEN</div>
+                            <div class="text-[11px] text-red-300/90 mt-0.5">
+                                Rule-Based Engine overrode AI verdict to enforce High Risk (Red) due to critical spoofing or malicious payload:
+                            </div>
+                            <ul id="override-reasons-list" class="list-disc list-inside text-[11px] text-red-200 mt-1 font-mono"></ul>
+                        </div>
+                    </div>
+
+                    <!-- 3-Component Score Breakdown Formula (Technical 40% + Link 30% + AI 30%) -->
+                    <div class="my-4 flex flex-col gap-2.5">
+                        <div class="text-xs font-semibold text-gray-300 flex items-center justify-between">
+                            <span>Score Composition Formula:</span>
+                            <span class="text-[11px] text-gray-500 font-mono">(Tech 40% + Link 30% + AI 30%)</span>
+                        </div>
+
+                        <!-- Technical Score (40%) -->
+                        <div>
+                            <div class="flex items-center justify-between text-[11px] mb-1">
+                                <span class="text-gray-400">Technical & Header Score (40% Weight)</span>
+                                <span id="score-tech-val" class="font-mono text-cyan-400 font-semibold">0%</span>
+                            </div>
+                            <div class="h-2 rounded-full bg-slate-800 overflow-hidden">
+                                <div id="score-tech-bar" class="h-full bg-cyan-500 transition-all duration-700" style="width: 0%"></div>
+                            </div>
+                        </div>
+
+                        <!-- Link & Attachment Score (30%) -->
+                        <div>
+                            <div class="flex items-center justify-between text-[11px] mb-1">
+                                <span class="text-gray-400">Link & Attachment Score (30% Weight)</span>
+                                <span id="score-link-val" class="font-mono text-yellow-400 font-semibold">0%</span>
+                            </div>
+                            <div class="h-2 rounded-full bg-slate-800 overflow-hidden">
+                                <div id="score-link-bar" class="h-full bg-yellow-500 transition-all duration-700" style="width: 0%"></div>
+                            </div>
+                        </div>
+
+                        <!-- Gemini AI Score (30%) -->
+                        <div>
+                            <div class="flex items-center justify-between text-[11px] mb-1">
+                                <span class="text-gray-400">Gemini AI Intent Score (30% Weight)</span>
+                                <span id="score-ai-val" class="font-mono text-purple-400 font-semibold">0%</span>
+                            </div>
+                            <div class="h-2 rounded-full bg-slate-800 overflow-hidden">
+                                <div id="score-ai-bar" class="h-full bg-purple-500 transition-all duration-700" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Dynamic Findings / Security Warnings -->
+                    <div class="mt-5 pt-4 border-t border-slate-800">
+                        <h4 id="verdict-findings-header" class="text-xs font-bold uppercase tracking-wider text-rose-400 mb-2 flex items-center gap-1.5">
+                            <span id="verdict-findings-icon"><i class="fas fa-hand text-sm"></i></span>
+                            <span id="verdict-findings-title">WHY YOU SHOULD NOT CLICK ON THIS EMAIL:</span>
+                        </h4>
+                        <ul id="why-not-click-list" class="flex flex-col gap-2">
+                            <!-- Populated with dynamic bullet points -->
+                        </ul>
+                    </div>
+
+                </div>
+
+                <!-- Deep Inspection Detail Tabs -->
+                <div class="bg-[#0d121f] border border-slate-800 rounded-2xl p-5 shadow-xl flex flex-col gap-4">
+                    <!-- Detail Sub-Tabs -->
+                    <div class="flex items-center gap-1 border-b border-slate-800 pb-2 overflow-x-auto text-xs">
+                        <button data-detail-target="detail-indicators" class="px-2.5 py-1.5 rounded-lg font-semibold text-cyan-300 border-b-2 border-cyan-400 bg-cyan-950/30 transition whitespace-nowrap">
+                            <i class="fas fa-triangle-exclamation"></i> Threat Flags
+                        </button>
+                        <button data-detail-target="detail-headers" class="px-2.5 py-1.5 rounded-lg font-semibold text-gray-400 border-b-2 border-transparent hover:text-gray-200 transition whitespace-nowrap">
+                            <i class="fas fa-envelope-open-text"></i> Headers & Spoofing
+                        </button>
+                        <button data-detail-target="detail-links" class="px-2.5 py-1.5 rounded-lg font-semibold text-gray-400 border-b-2 border-transparent hover:text-gray-200 transition whitespace-nowrap">
+                            <i class="fas fa-link"></i> Links & Attachments
+                        </button>
+                        <button data-detail-target="detail-ai" class="px-2.5 py-1.5 rounded-lg font-semibold text-gray-400 border-b-2 border-transparent hover:text-gray-200 transition whitespace-nowrap">
+                            <i class="fas fa-brain"></i> Gemini NLP Intent
+                        </button>
+                        <button data-detail-target="detail-preview" class="px-2.5 py-1.5 rounded-lg font-semibold text-gray-400 border-b-2 border-transparent hover:text-gray-200 transition whitespace-nowrap">
+                            <i class="fas fa-shield-cat"></i> Defanged Preview
+                        </button>
+                    </div>
+
+                    <!-- 1. Threat Flags Pane -->
+                    <div id="detail-indicators" class="detail-pane flex flex-col gap-2.5">
+                        <div id="indicators-detail-list" class="flex flex-col gap-2 max-h-[300px] overflow-y-auto"></div>
+                    </div>
+
+                    <!-- 2. Headers & Spoofing Pane -->
+                    <div id="detail-headers" class="detail-pane hidden flex flex-col gap-3 text-xs">
+                        <div class="grid grid-cols-2 gap-2">
+                            <div class="p-2.5 rounded bg-slate-900 border border-slate-800">
+                                <span class="text-gray-500 block text-[10px] uppercase">Display Name</span>
+                                <span id="header-display-name" class="font-semibold text-gray-200"></span>
+                            </div>
+                            <div class="p-2.5 rounded bg-slate-900 border border-slate-800">
+                                <span class="text-gray-500 block text-[10px] uppercase">Sending Address</span>
+                                <span id="header-sender-address" class="font-mono text-cyan-300"></span>
+                            </div>
+                            <div class="p-2.5 rounded bg-slate-900 border border-slate-800 col-span-2">
+                                <span class="text-gray-500 block text-[10px] uppercase">Reply-To Address</span>
+                                <span id="header-reply-to" class="font-mono text-amber-300"></span>
+                            </div>
+                        </div>
+
+                        <!-- SPF / DKIM / DMARC Badges -->
+                        <div class="border-t border-slate-800 pt-3">
+                            <span class="text-gray-400 font-semibold block mb-2">Cryptographic Email Authentication:</span>
+                            <div class="grid grid-cols-3 gap-2 text-center">
+                                <div class="p-2 rounded bg-slate-900 border border-slate-800">
+                                    <div class="text-[10px] text-gray-500 uppercase">SPF</div>
+                                    <div id="header-spf-status" class="text-xs">None</div>
+                                </div>
+                                <div class="p-2 rounded bg-slate-900 border border-slate-800">
+                                    <div class="text-[10px] text-gray-500 uppercase">DKIM</div>
+                                    <div id="header-dkim-status" class="text-xs">None</div>
+                                </div>
+                                <div class="p-2 rounded bg-slate-900 border border-slate-800">
+                                    <div class="text-[10px] text-gray-500 uppercase">DMARC</div>
+                                    <div id="header-dmarc-status" class="text-xs">None</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 3. Links & Attachments Pane -->
+                    <div id="detail-links" class="detail-pane hidden flex flex-col gap-3">
+                        <div>
+                            <span class="text-xs font-semibold text-gray-300 block mb-1.5">Inspected Hyperlinks:</span>
+                            <div id="links-inspection-list" class="flex flex-col gap-2 max-h-[160px] overflow-y-auto"></div>
+                        </div>
+                        <div class="border-t border-slate-800 pt-2">
+                            <span class="text-xs font-semibold text-gray-300 block mb-1.5">Inspected Attachments:</span>
+                            <div id="attachments-inspection-list" class="flex flex-col gap-2 max-h-[120px] overflow-y-auto"></div>
+                        </div>
+                    </div>
+
+                    <!-- 4. Gemini AI NLP Intent Pane -->
+                    <div id="detail-ai" class="detail-pane hidden flex flex-col gap-3 text-xs">
+                        <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+                            <span class="text-gray-400">Analysis Engine:</span>
+                            <span id="ai-model-tag" class="px-2 py-0.5 rounded bg-purple-950 text-purple-300 font-mono text-[10px] border border-purple-800">Google Gemini</span>
+                        </div>
+
+                        <div id="ai-prompt-injection-badge" class="hidden p-2 rounded bg-red-950 text-red-300 border border-red-700 text-xs font-bold">
+                            <i class="fas fa-shield-virus"></i> Indirect Prompt Injection Attack Neutralized
+                        </div>
+
+                        <!-- 4 Dimensions of Gemini AI Analysis -->
+                        <div class="flex flex-col gap-2.5">
+                            <div>
+                                <div class="flex justify-between text-[11px] mb-1">
+                                    <span class="text-gray-300 font-medium">1. Urgency & Fear Tactics</span>
+                                    <span id="ai-urgency-score" class="font-mono text-rose-400">0%</span>
+                                </div>
+                                <div class="h-1.5 bg-slate-800 rounded-full overflow-hidden">
+                                    <div id="ai-urgency-bar" class="h-full bg-rose-500" style="width: 0%"></div>
+                                </div>
+                                <div id="ai-urgency-desc" class="text-[11px] text-gray-400 mt-1"></div>
+                            </div>
+
+                            <div>
+                                <div class="flex justify-between text-[11px] mb-1">
+                                    <span class="text-gray-300 font-medium">2. Authority / Brand Impersonation</span>
+                                    <span id="ai-authority-score" class="font-mono text-amber-400">0%</span>
+                                </div>
+                                <div class="h-1.5 bg-slate-800 rounded-full overflow-hidden">
+                                    <div id="ai-authority-bar" class="h-full bg-amber-500" style="width: 0%"></div>
+                                </div>
+                                <div id="ai-authority-desc" class="text-[11px] text-gray-400 mt-1"></div>
+                            </div>
+
+                            <div>
+                                <div class="flex justify-between text-[11px] mb-1">
+                                    <span class="text-gray-300 font-medium">3. Credential / Money Request</span>
+                                    <span id="ai-credential-score" class="font-mono text-yellow-400">0%</span>
+                                </div>
+                                <div class="h-1.5 bg-slate-800 rounded-full overflow-hidden">
+                                    <div id="ai-credential-bar" class="h-full bg-yellow-500" style="width: 0%"></div>
+                                </div>
+                                <div id="ai-credential-desc" class="text-[11px] text-gray-400 mt-1"></div>
+                            </div>
+
+                            <div>
+                                <div class="flex justify-between text-[11px] mb-1">
+                                    <span class="text-gray-300 font-medium">4. Grammar & Spelling Anomalies</span>
+                                    <span id="ai-grammar-score" class="font-mono text-cyan-400">0%</span>
+                                </div>
+                                <div class="h-1.5 bg-slate-800 rounded-full overflow-hidden">
+                                    <div id="ai-grammar-bar" class="h-full bg-cyan-500" style="width: 0%"></div>
+                                </div>
+                                <div id="ai-grammar-desc" class="text-[11px] text-gray-400 mt-1"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 5. Defanged Safe Preview Pane (Security Guard 1) -->
+                    <div id="detail-preview" class="detail-pane hidden flex flex-col gap-2.5">
+                        <div class="p-2.5 rounded bg-emerald-950/40 border border-emerald-800/60 text-xs text-emerald-300 flex items-center gap-2">
+                            <i class="fas fa-lock"></i>
+                            <span><strong>Security Guard 1 Active:</strong> Links are neutralized to non-clickable <code>hxxps://</code> and <code>[.]</code>, scripts stripped, and tracking pixels removed.</span>
+                        </div>
+                        <div class="bg-slate-900 p-3 rounded-lg border border-slate-800 text-xs">
+                            <div class="text-gray-400 mb-1">From: <span id="preview-defanged-sender" class="font-mono text-gray-200"></span></div>
+                            <div class="text-gray-400 mb-2">Subject: <span id="preview-defanged-subject" class="font-semibold text-gray-200"></span></div>
+                            <div class="border-t border-slate-800 pt-2 overflow-x-auto max-h-[220px]">
+                                <div id="preview-sanitized-body" class="text-gray-300 text-xs"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-800/80 bg-[#090d18] py-4 text-center text-xs text-gray-500">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+            <div>
+                ShieldMail AI Email Security Scanner &copy; 2026. Built with Python, Flask, Tailwind & Google Gemini.
+            </div>
+            <div class="flex items-center gap-4 text-gray-400">
+                <span><i class="fas fa-shield text-cyan-400"></i> Zero Body Storage</span>
+                <span><i class="fas fa-user-shield text-emerald-400"></i> XSS & Pixel Sanitization</span>
+                <span><i class="fas fa-code text-purple-400"></i> Prompt Injection Shield</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-[#0d121f] border border-slate-800 rounded-2xl p-6 max-w-md w-full shadow-2xl flex flex-col gap-4">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                    <i class="fas fa-sliders text-cyan-400"></i> Engine & Security Settings
+                </h3>
+                <button type="button" id="btn-close-settings" class="text-gray-400 hover:text-white">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <form id="settings-form" class="flex flex-col gap-3">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-300 mb-1">
+                        Google Gemini API Key
+                    </label>
+                    <input type="password" id="settings-gemini-key" placeholder="AIzaSy..."
+                        class="w-full px-3 py-2 text-xs rounded-lg bg-slate-900 border border-slate-700 text-gray-200 focus:outline-none focus:border-cyan-500 font-mono">
+                    <p class="text-[11px] text-gray-500 mt-1">Enables live Gemini structured JSON NLP intent analysis.</p>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-gray-300 mb-1">
+                        Google Safe Browsing API Key <span class="text-gray-500 font-normal">(Optional)</span>
+                    </label>
+                    <input type="password" id="settings-safebrowsing-key" placeholder="Safe Browsing Key"
+                        class="w-full px-3 py-2 text-xs rounded-lg bg-slate-900 border border-slate-700 text-gray-200 focus:outline-none focus:border-cyan-500 font-mono">
+                    <p class="text-[11px] text-gray-500 mt-1">Live lookup against Google's confirmed malware & phishing blacklist.</p>
+                </div>
+
+                <div class="border-t border-slate-800 pt-3 flex justify-end gap-2">
+                    <button type="button" onclick="document.getElementById('settings-modal').classList.add('hidden')" class="px-3 py-1.5 rounded-lg text-xs bg-slate-800 text-gray-300 hover:text-white">
+                        Cancel
+                    </button>
+                    <button type="submit" class="px-4 py-1.5 rounded-lg text-xs font-bold bg-cyan-500 hover:bg-cyan-400 text-black shadow">
+                        Save Configurations
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Notifications Container -->
+    <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 max-w-sm"></div>
+
+    <!-- Frontend Application Logic Script -->
+    <script src="./static/js/app.js"></script>
+</body>
+</html>

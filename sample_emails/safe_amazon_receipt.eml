@@ -1,0 +1,29 @@
+From: "Amazon.com" <auto-confirm@amazon.com>
+To: prime.member@example.com
+Subject: Your Amazon.com Order Confirmation #114-889102-3341
+Date: Wed, 29 Oct 2026 08:20:15 +0500
+Message-ID: <order-114-889102-3341@amazon.com>
+MIME-Version: 1.0
+Content-Type: text/html; charset="utf-8"
+Authentication-Results: mx.google.com;
+  spf=pass (google.com: domain of auto-confirm@amazon.com designates 54.240.27.1 as permitted sender);
+  dkim=pass header.i=@amazon.com;
+  dmarc=pass (p=REJECT)
+Received-SPF: pass (google.com: domain of auto-confirm@amazon.com designates 54.240.27.1 as permitted sender)
+
+<!DOCTYPE html>
+<html>
+<body style="font-family: Arial, sans-serif; color: #333;">
+  <h2 style="color: #232f3e;">Amazon Order Confirmation</h2>
+  <p>Hello Alex,</p>
+  <p>Thank you for your order. We'll send a confirmation when your item ships.</p>
+  <div style="background-color: #f7f7f7; padding: 15px; border-radius: 6px;">
+    <strong>Order #114-889102-3341</strong><br/>
+    Item: Logitech MX Master 3S Wireless Mouse - Graphite<br/>
+    Total: $99.99
+  </div>
+  <p>View your order details anytime on Amazon:</p>
+  <p><a href="https://www.amazon.com/your-orders">https://www.amazon.com/your-orders</a></p>
+  <p>Thanks for shopping with Amazon!</p>
+</body>
+</html>

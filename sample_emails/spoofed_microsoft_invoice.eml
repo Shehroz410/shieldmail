@@ -1,0 +1,33 @@
+From: "Microsoft Support" <billing-update99@gmail.com>
+To: accounting@company.com
+Subject: Invoice from Microsoft - Action Required for Office 365
+Date: Wed, 29 Oct 2026 09:30:10 +0500
+Message-ID: <msft-invoice-8812@gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="----=_NextPart_001_MSFT"
+
+------=_NextPart_001_MSFT
+Content-Type: text/html; charset="utf-8"
+
+<!DOCTYPE html>
+<html>
+<body>
+  <h3>Microsoft Cloud Services</h3>
+  <p>Dear Customer,</p>
+  <p>Your subscription for Microsoft 365 Business Standard expired today. A payment of $499.00 is currently pending.</p>
+  <p>Please review the attached invoice breakdown and confirm your billing details within 48 hours to avoid service disruption.</p>
+  <p><a href="http://security-update-microsoft365.online/billing">http://microsoft.com/billing-portal</a></p>
+  <p>Regards,<br/>Microsoft Support Team</p>
+</body>
+</html>
+
+------=_NextPart_001_MSFT
+Content-Type: application/zip; name="Invoice_MS365_Pending.zip"
+Content-Disposition: attachment; filename="Invoice_MS365_Pending.zip"
+Content-Transfer-Encoding: base64
+
+UEsDBBQAAAAIAAAAAAAAAAAAAAAAAAAAAAAIABEAanVuay50eHRVVA0AB2lBbmVpQW5laUFu
+eHQDAQA6AAAAUEsBAh4DFAAAAAgAAAAAAAAAAAAAAAAAAAAAAAgAEAAAAAAAAAAAQKSBAAAA
+AGp1bmsudHh0VVQNADtpQW5laUFuZWlBbnHQDAQA6AAAAUEsFBgAAAAABAAEATgAAAEwAAAAA
+AA==
+------=_NextPart_001_MSFT--

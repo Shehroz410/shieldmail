@@ -1,0 +1,115 @@
+/* Cyber Dark Security Theme */
+:root {
+    --bg-main: #070a13;
+    --bg-card: #0d121f;
+    --bg-card-hover: #141b2d;
+    --border-color: #1e293b;
+    --cyan-glow: #00f2fe;
+    --red-glow: #ff3366;
+    --green-glow: #00e676;
+    --yellow-glow: #ffab00;
+}
+
+body {
+    background-color: var(--bg-main);
+    color: #e2e8f0;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    overflow-x: hidden;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+::-webkit-scrollbar-track {
+    background: #090d16;
+}
+::-webkit-scrollbar-thumb {
+    background: #1e293b;
+    border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #334155;
+}
+
+/* Neon glow animations */
+.glow-cyan {
+    box-shadow: 0 0 15px rgba(0, 242, 254, 0.25);
+}
+.glow-red {
+    box-shadow: 0 0 20px rgba(255, 51, 102, 0.35);
+    border-color: rgba(255, 51, 102, 0.6) !important;
+}
+.glow-yellow {
+    box-shadow: 0 0 20px rgba(255, 171, 0, 0.35);
+    border-color: rgba(255, 171, 0, 0.6) !important;
+}
+.glow-green {
+    box-shadow: 0 0 20px rgba(0, 230, 118, 0.35);
+    border-color: rgba(0, 230, 118, 0.6) !important;
+}
+
+/* Radar pulse animation */
+@keyframes radar-pulse {
+    0% {
+        transform: scale(0.95);
+        opacity: 0.8;
+    }
+    50% {
+        transform: scale(1.05);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(0.95);
+        opacity: 0.8;
+    }
+}
+
+.radar-active {
+    animation: radar-pulse 2s infinite ease-in-out;
+}
+
+/* Defanged link display */
+.defanged-link {
+    background: rgba(255, 51, 102, 0.15) !important;
+    border: 1px dashed rgba(255, 51, 102, 0.5) !important;
+    color: #ff859f !important;
+    font-family: monospace;
+    font-size: 0.8rem;
+    padding: 2px 6px;
+    border-radius: 4px;
+    display: inline-block;
+    cursor: not-allowed !important;
+    user-select: all;
+}
+
+/* Gauge circle styling */
+.risk-gauge-circle {
+    transition: stroke-dashoffset 1s ease-in-out, stroke 0.5s ease;
+}
+
+/* Scan active progress bar animation */
+@keyframes scanning-laser {
+    0% {
+        left: -40%;
+    }
+    100% {
+        left: 100%;
+    }
+}
+
+.laser-scanner {
+    position: relative;
+    overflow: hidden;
+}
+.laser-scanner::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -40%;
+    width: 40%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(0, 242, 254, 0.8), transparent);
+    animation: scanning-laser 1.5s infinite linear;
+}
